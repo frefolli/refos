@@ -2,4 +2,4 @@
 	echo -e ""
 
 clean:
-	rm -rf log.txt
+	rm -rf *log*.txt
