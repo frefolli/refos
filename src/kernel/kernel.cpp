@@ -12,7 +12,7 @@ extern "C" int kmain(uint64_t magic, uint64_t address) {
 
     // processing
     if (boot::checkMagic(magic)) {
-        if (boo::checkAddress(address)) {
+        if (boot::checkAddress(address)) {
             boot::readHeader((uint8_t*) address, &boot_info);
 
             Kernel kernel::kernel (&boot_info);
