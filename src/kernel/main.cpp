@@ -76,13 +76,16 @@ void print_integer(uint64_t num, uint8_t base = 0) {
     }
 }
 
-extern "C" int kmain(uint64_t magic, uint64_t address) {
-    print_string("hdr = (0x");
-    print_integer(magic, 16);
+extern void print_couple(uint64_t A, uint64_t B) {
+    print_string("(0x");
+    print_integer(A, 16);
     print_string(", 0x");
-    print_integer(address, 16);
-    print_string(");\n");
+    print_integer(B, 16);
+    print_string("); ");
+}
 
+extern "C" int kmain(uint64_t magic, uint64_t address) {
+    print_couple(magic, address);
     // processing
     if (magic == 0x36d76289) {
         if (!(address & 7)) {
@@ -90,16 +93,8 @@ extern "C" int kmain(uint64_t magic, uint64_t address) {
             read_multiboot2_header(
                     (uint8_t*) address, &boot_info);
             
-            // usablity placeholder
-            /*
-            print_string(", screen = (");
-            print_integer(boot_info.screen.width, 10);
-            print_string(" x ");
-            print_integer(boot_info.screen.height, 10);
-            print_string(" x ");
-            print_integer(boot_info.screen.bpp, 10);
-            print_string(");");
-            */
+            print_couple(boot_info.screen.width, boot_info.screen.height);
+
             print_string("meta = (");
             print_integer(boot_info.meta.total_size, 10);
             print_string(");\n");
