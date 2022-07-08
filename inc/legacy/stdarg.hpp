@@ -15,7 +15,7 @@ typedef __builtin_va_list __gnuc_va_list;
 
 /* Define the standard macros for the user,
    if this invocation was from the user program.  */
-#ifdef _STDARG_H
+#ifdef __STDARG_HPP__
 
 #define va_start(v,l)	__builtin_va_start(v,l)
 #define va_end(v)	__builtin_va_end(v)

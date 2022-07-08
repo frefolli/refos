@@ -21,15 +21,15 @@ namespace video {
         lightMagenta = 13,
         yellow = 14,
         brightWhite = 15    
-    }
+    };
 
     class VGATextAdapter : public Adapter {
         private:
             screen_t properties;
             mode_t mode;
 
-            uint32_t cursor_x = 0;
-            uint32_t cursor_y = 0;
+            uint32_t x = 0;
+            uint32_t y = 0;
             uint8_t foreground = color16_t::white;
             uint8_t background = color16_t::black;
         public:
@@ -37,14 +37,15 @@ namespace video {
             ~VGATextAdapter();
 
             screen_t getVideoProperties();
-            move_t   getVideoMode();
+            mode_t   getVideoMode();
 
             void   printChar(char c);
             void   printInteger(uint64_t num, uint8_t base);
             void   printString(const char* str);
+            void   printf(const char* fmt ...);
             void   clearScreen();
             void   scrollScreen();
-    }
-}
+    };
+};
 
 #endif

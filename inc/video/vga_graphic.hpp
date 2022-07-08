@@ -1,6 +1,8 @@
 #ifndef __VIDEO_VGA_GRAPHIC_HPP__
 #define __VIDEO_VGA_GRAPHIC_HPP__
 
+#include "video.hpp"
+
 namespace video {
     class VGAGraphicAdapter : public Adapter {
         private:
@@ -10,14 +12,15 @@ namespace video {
             VGAGraphicAdapter(screen_t properties);
             ~VGAGraphicAdapter();
 
-            screen_t getVideoProperties() = 0;
-            move_t   getVideoMode() = 0;
+            screen_t getVideoProperties();
+            mode_t   getVideoMode();
 
-            void   printChar(char c) = 0;
-            void   printInteger(uint64_t num, uint8_t base) = 0;
-            void   printString(const char* str) = 0;
-            void   clearScreen() = 0;
-    }
-}
+            void   printChar(char c);
+            void   printInteger(uint64_t num, uint8_t base);
+            void   printString(const char* str);
+            void   printf(const char* fmt ...);
+            void   clearScreen();
+    };
+};
 
 #endif

@@ -7,14 +7,18 @@
 
 namespace kernel {
     class Kernel {
-        private:
-            video::Adapter* VIDEO;
-            memory::Manager* MEMORY;
         public:
+            video::Adapter* video;
+            memory::Manager* memory;
+            boot::info_t* bootInfo;
+
             Kernel(boot::info_t* boot_info);
+            Kernel(); // empty
             ~Kernel();
 
             void main();
+            void die();
+            void panic(const char*);
     };
 
     extern Kernel kernel;

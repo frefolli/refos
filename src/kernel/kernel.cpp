@@ -1,23 +1,33 @@
 #include "kernel/kernel.hpp"
+#include "legacy/stdbool.hpp"
 
-/* 
- * this function checks that bootloader is multiboot2
- * compliant and that multiboot2 tags are loaded correcly,
- * then read this informations and starts the Kernel
- */
-extern "C" int kmain(uint64_t magic, uint64_t address) {
-    boot::info_t boot_info;
-    boot_info.meta.magic = magic;
-    boot_info.meta.address = address;
+kernel::Kernel::Kernel(boot::info_t* bootInfo) {
+    this->bootInfo = bootInfo;
+    this->memory = memory::Manager::buildManager(bootInfo->memory);
+    this->video = video::Adapter::buildAdapter(bootInfo->screen);
+}
 
-    // processing
-    if (boot::checkMagic(magic)) {
-        if (boot::checkAddress(address)) {
-            boot::readHeader((uint8_t*) address, &boot_info);
+kernel::Kernel::Kernel() {
+    //
+}
 
-            Kernel kernel::kernel (&boot_info);
-            kernel::main();
-        }
-    }
-    return 0;
+kernel::Kernel::~Kernel() {
+    // won't clean memory for now, because
+    // it's prevised that kernel can be destroyed
+    // in a normal situation
+}
+
+void kernel::Kernel::main() {
+    // start services, for now just print boot_info
+    boot::printInfo(this->bootInfo);
+    this->panic("nothing else to do, panik!");
+}
+
+void kernel::Kernel::die() {
+    while(true);
+}
+
+void kernel::Kernel::panic(const char* reason) {
+    this->video->printf("kernel panic: %s\n", reason);
+    this->die();
 }

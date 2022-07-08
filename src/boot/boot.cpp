@@ -1,11 +1,12 @@
 #include "boot/boot.hpp"
 #include "boot/multiboot2.hpp"
+#include "kernel/kernel.hpp"
 
-bool checkMagic(uint64_t magic) {
+bool boot::checkMagic(uint64_t magic) {
     return (magic == MULTIBOOT2_BOOTLOADER_MAGIC);
 }
 
-bool checkAddress(uint64_t address) {
+bool boot::checkAddress(uint64_t address) {
     return !(address & 7);
 }
 
@@ -45,11 +46,11 @@ void boot::readHeader(uint8_t* address, boot::info_t* boot_info) {
     address += 8;
     uint32_t type, size;
     do {
-        read_multiboot2_tag(address, &type, &size);
+        boot::readTag(address, &type, &size);
         
         switch (type) {
             case MULTIBOOT_TAG_TYPE_FRAMEBUFFER : {
-                read_multiboot2_tag_framebuffer(address, boot_info); break;
+                boot::readFramebufferTag(address, boot_info); break;
             }
             case MULTIBOOT_TAG_TYPE_END : return;
             default: break;
@@ -57,8 +58,48 @@ void boot::readHeader(uint8_t* address, boot::info_t* boot_info) {
         
         address += align_address(size);
     } while(address < deadline);
+
+    boot_info->memory.base = 0x100000;
+    boot_info->memory.limit = 0;
+    boot_info->memory.base = memory::mode_t::PAGED;
 }
 
-void printInfo(boot::info_t* /*boot_info*/) {
-    // TODO
+void boot::printInfo(boot::info_t* boot_info) {
+    video::Adapter* out = kernel::kernel.video;
+
+    // start
+    out->printf("boot info ...\n");
+    
+    // meta
+    out->printf("|  meta  | magic       = %d\n",
+           boot_info->meta.magic);
+    out->printf("|  meta  | address     = %d\n",
+            boot_info->meta.address);
+    out->printf("|  meta  | total_size  = %d\n",
+            boot_info->meta.total_size);
+
+    // screen
+    out->printf("| screen | framebuffer = %d\n",
+            boot_info->screen.framebuffer);
+    out->printf("| screen | width       = %d\n",
+            boot_info->screen.width);
+    out->printf("| screen | height      = %d\n",
+            boot_info->screen.height);
+    out->printf("| screen | pitch       = %d\n",
+            boot_info->screen.pitch);
+    out->printf("| screen | bpp         = %d\n",
+            boot_info->screen.bpp);
+    out->printf("| screen | type        = %d\n",
+            boot_info->screen.type);
+
+    // memory
+    out->printf("| memory | base        = %d\n",
+           boot_info->memory.base);
+    out->printf("| memory | limit       = %d\n",
+            boot_info->memory.limit);
+    out->printf("| memory | mode        = %d\n",
+            boot_info->memory.mode);
+
+    // end
+    out->printf("\n");
 }

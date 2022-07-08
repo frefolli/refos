@@ -13,7 +13,7 @@ video::screen_t video::VGATextAdapter::getVideoProperties() {
     return this->properties;
 }
 
-video::move_t video::VGATextAdapter::getVideoMode() {
+video::mode_t video::VGATextAdapter::getVideoMode() {
     return this->mode;
 }
 
@@ -29,7 +29,7 @@ void video::VGATextAdapter::printChar(char c) {
         }; break;
         
         case '\n' : {
-            for (uint16_t i = this->x; i < this->properties->width)
+            for (uint16_t i = this->x; i < this->properties.width; i++)
                 this->printChar(' ');
         }; break;
         
@@ -44,7 +44,7 @@ void video::VGATextAdapter::printChar(char c) {
             if (this->x == this->properties.width - 1) {
                 this->x = 0;
                 if (this->y == this->properties.height - 1) {
-                    this->scroll();
+                    this->scrollScreen();
                 } else {
                     this->y++;
                 }
@@ -55,12 +55,27 @@ void video::VGATextAdapter::printChar(char c) {
     }
 }
 
+// max base 16
+static const char* _digits = "0123456789abcdef";
 void video::VGATextAdapter::printInteger(uint64_t num, uint8_t base) {
-    // TODO
+    char buffer[21]; buffer[20] = '\0';
+    char* ptr = buffer + 20;
+    do {
+        ptr--;
+        *ptr = _digits[num % base];
+        num /= base;
+    } while(num != 0);
+
+    if (base == 16)
+        this->printString("0x");
+
+    this->printString(ptr);
 }
 
 void video::VGATextAdapter::printString(const char* str) {
-    // TODO
+    while(*str != '\0') {
+        this->printChar(*str); str++;
+    }
 }
 
 void video::VGATextAdapter::clearScreen() {
@@ -84,4 +99,35 @@ void video::VGATextAdapter::scrollScreen() {
     while(ptr < deadline) {
         *ptr = *(ptr + this->properties.width);
     }
+}
+
+void video::VGATextAdapter::printf(const char* fmt ...) {
+    va_list args;
+    va_start(args, fmt);
+    
+    while(*fmt != '\0') {
+        if (*fmt == '%') {
+            fmt++;
+            switch(*fmt) {
+                case 'd' : {
+                    int num = va_arg(args, int);
+                    this->printInteger(num, 10);
+                }; break;
+                case 'x' : {
+                    int num = va_arg(args, int);
+                    this->printInteger(num, 16);
+                }; break;
+                case 's' : {
+                    const char* str = va_arg(args, const char*);
+                    this->printString(str);
+                }; break;
+                default: break;
+            }; fmt++;
+        } else {
+            this->printChar(*fmt);
+            fmt++;
+        }
+    }
+
+    va_end(args);
 }

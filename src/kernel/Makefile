@@ -4,7 +4,7 @@ gxx_objects=$(patsubst %.cpp,%.o,$(wildcard *.cpp))
 result=../../build/$$(basename $$PWD).o
 include=-I../../inc
 gccflags=-m64 -Wall -Wextra -Werror $(include) -nostdlib -nostdinc -fno-builtin -fno-stack-protector
-gxxflags=-m64 -Wall -Wextra -Werror $(include) -nostdlib -nostdinc -fno-builtin -fno-stack-protector 
+gxxflags=-m64 -Wall -Wextra -Werror $(include) -fno-rtti -nostdlib -nostdinc -fno-builtin -fno-stack-protector -fno-exceptions
 
 @all: $(result)
 

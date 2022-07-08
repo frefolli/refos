@@ -24,5 +24,7 @@ video::Adapter* video::Adapter::buildAdapter(screen_t properties) {
         return new video::VGATextAdapter(properties);
     } else if (isTextMode(properties.type)) {
         return new video::VGAGraphicAdapter(properties);
+    } else {
+        return 0;
     }
 }
