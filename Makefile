@@ -4,6 +4,9 @@
 run:
 	make -C build run
 
+bochs:
+	make -C build bochs
+
 compile:
 	make -C src   compile
 	make -C build compile
@@ -16,3 +19,5 @@ clean:
 config:
 	make -C build config
 	make -C src   config
+
+reset: clean config
