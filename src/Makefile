@@ -1,4 +1,4 @@
-MODULES=kernel loader boot
+MODULES=kernel loader boot memory video
 
 @all:
 	echo -e ""

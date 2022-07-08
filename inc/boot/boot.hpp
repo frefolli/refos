@@ -2,7 +2,7 @@
 #define __BOOT_HPP__
 
 #include "../video/video.hpp"
-#include "../libc/stdbool.hpp"
+#include "../legacy/stdbool.hpp"
 
 namespace boot {
     typedef struct __attribute__((packed)) {

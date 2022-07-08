@@ -1,6 +1,14 @@
 #include "boot/boot.hpp"
 #include "boot/multiboot2.hpp"
 
+bool checkMagic(uint64_t magic) {
+    return (magic == MULTIBOOT2_BOOTLOADER_MAGIC);
+}
+
+bool checkAddress(uint64_t address) {
+    return !(address & 7);
+}
+
 inline int align_address(uint32_t reladdr) {
     int rem = reladdr % 8;
     if (rem == 0)

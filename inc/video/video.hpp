@@ -21,16 +21,16 @@ namespace video {
 
     class Adapter {
         public:
-            Adapter(screen_t* properties);
+            Adapter(/* empty adapter */);
             virtual ~Adapter();
 
-            virtual screen_t getVideoProperties();
-            virtual move_t   getVideoMode();
+            virtual screen_t getVideoProperties() = 0;
+            virtual move_t   getVideoMode() = 0;
 
-            virtual void   printChar(char c);
-            virtual void   printInteger(uint64_t num, uint8_t base);
-            virtual void   printString(const char* str);
-            virtual void   clearScreen();
+            virtual void   printChar(char c) = 0;
+            virtual void   printInteger(uint64_t num, uint8_t base) = 0;
+            virtual void   printString(const char* str) = 0;
+            virtual void   clearScreen() = 0;
 
             static Adapter* buildAdapter(screen_t properties);
     }
