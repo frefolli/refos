@@ -17,6 +17,8 @@ namespace kernel {
             ~Kernel();
 
             void main();
+            void initMemory();
+            void initVideo();
             void die();
             void panic(const char*);
     };

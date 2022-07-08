@@ -35,7 +35,7 @@ void video::VGATextAdapter::printChar(char c) {
         
         default : {
             uint16_t* ptr = (uint16_t*) this->properties.framebuffer;
-            uint32_t shift = this->x + this->y * this->properties.pitch;
+            uint32_t shift = this->x + this->y * this->properties.width;
             *(ptr + shift) = 
                 (this->background << 12) | 
                 (this->foreground << 8) | 
@@ -110,11 +110,11 @@ void video::VGATextAdapter::printf(const char* fmt ...) {
             fmt++;
             switch(*fmt) {
                 case 'd' : {
-                    int num = va_arg(args, int);
+                    int64_t num = va_arg(args, int64_t);
                     this->printInteger(num, 10);
                 }; break;
                 case 'x' : {
-                    int num = va_arg(args, int);
+                    int64_t num = va_arg(args, int64_t);
                     this->printInteger(num, 16);
                 }; break;
                 case 's' : {

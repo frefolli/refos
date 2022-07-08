@@ -18,6 +18,8 @@ extern "C" int kmain(uint64_t magic, uint64_t address) {
             boot::readHeader((uint8_t*) address, &bootInfo);
 
             kernel::kernel = kernel::Kernel(&bootInfo);
+            kernel::kernel.initMemory();
+            kernel::kernel.initVideo();
             kernel::kernel.main();
         }
     }

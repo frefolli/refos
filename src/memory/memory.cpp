@@ -11,9 +11,10 @@ memory::Manager::~Manager() {
 
 memory::Manager* memory::Manager::buildManager(memory::memory_t properties) {
     if (properties.mode == memory::mode_t::PAGED) {
-        memory::Manager* ptr = (memory::Manager*) properties.base;
+        uint8_t* ptr = (uint8_t*) properties.base;
         properties.base += sizeof(memory::PagedManager);
-        *ptr = memory::PagedManager(properties);
+        memory::PagedManager *manager = new (ptr) memory::PagedManager(properties);
+        return (memory::Manager*) manager;
     }
     return 0;
 }

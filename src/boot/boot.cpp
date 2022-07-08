@@ -52,7 +52,7 @@ void boot::readHeader(uint8_t* address, boot::info_t* boot_info) {
             case MULTIBOOT_TAG_TYPE_FRAMEBUFFER : {
                 boot::readFramebufferTag(address, boot_info); break;
             }
-            case MULTIBOOT_TAG_TYPE_END : return;
+            case MULTIBOOT_TAG_TYPE_END : break;
             default: break;
         }
         
@@ -61,7 +61,7 @@ void boot::readHeader(uint8_t* address, boot::info_t* boot_info) {
 
     boot_info->memory.base = 0x100000;
     boot_info->memory.limit = 0;
-    boot_info->memory.base = memory::mode_t::PAGED;
+    boot_info->memory.mode = memory::mode_t::PAGED;
 }
 
 void boot::printInfo(boot::info_t* boot_info) {
@@ -77,7 +77,6 @@ void boot::printInfo(boot::info_t* boot_info) {
             boot_info->meta.address);
     out->printf("|  meta  | total_size  = %d\n",
             boot_info->meta.total_size);
-
     // screen
     out->printf("| screen | framebuffer = %d\n",
             boot_info->screen.framebuffer);
@@ -99,7 +98,6 @@ void boot::printInfo(boot::info_t* boot_info) {
             boot_info->memory.limit);
     out->printf("| memory | mode        = %d\n",
             boot_info->memory.mode);
-
     // end
     out->printf("\n");
 }

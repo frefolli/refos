@@ -2,6 +2,12 @@
 #define __MEMORY_HPP__
 
 #include "legacy/stdint.hpp"
+typedef long unsigned int size_t;
+
+inline void *operator new(size_t, void *p)     throw() { return p; }
+inline void *operator new[](size_t, void *p)   throw() { return p; }
+inline void  operator delete  (void *, void *) throw() { };
+inline void  operator delete[](void *, void *) throw() { };
 
 namespace memory {
     enum mode_t {

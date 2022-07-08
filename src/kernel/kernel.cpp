@@ -3,18 +3,24 @@
 
 kernel::Kernel::Kernel(boot::info_t* bootInfo) {
     this->bootInfo = bootInfo;
-    this->memory = memory::Manager::buildManager(bootInfo->memory);
-    this->video = video::Adapter::buildAdapter(bootInfo->screen);
 }
 
 kernel::Kernel::Kernel() {
-    //
+    // placeholder
 }
 
 kernel::Kernel::~Kernel() {
     // won't clean memory for now, because
     // it's prevised that kernel can be destroyed
     // in a normal situation
+}
+
+void kernel::Kernel::initVideo() {
+    this->video = video::Adapter::buildAdapter(bootInfo->screen);
+}
+
+void kernel::Kernel::initMemory() {
+    this->memory = memory::Manager::buildManager(bootInfo->memory);
 }
 
 void kernel::Kernel::main() {
