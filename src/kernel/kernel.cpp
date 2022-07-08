@@ -11,7 +11,7 @@ extern "C" int kmain(uint64_t magic, uint64_t address) {
     boot_info.meta.address = address;
 
     // processing
-    if (boot::checkMagic()) {
+    if (boot::checkMagic(magic)) {
         if (boo::checkAddress(address)) {
             boot::readHeader((uint8_t*) address, &boot_info);
 
