@@ -12,15 +12,14 @@ namespace kernel {
             memory::Manager* memory;
             boot::info_t* bootInfo;
 
-            Kernel(boot::info_t* boot_info);
+            Kernel(boot::info_t* bootInfo);
             Kernel(); // empty
             ~Kernel();
 
             void main();
-            void initMemory();
-            void initVideo();
             void die();
             void panic(const char*);
+            void dumpState();
     };
 
     extern Kernel kernel;

@@ -24,7 +24,7 @@ namespace video {
     };
 
     class VGATextAdapter : public Adapter {
-        private:
+        public:
             screen_t properties;
             mode_t mode;
 
@@ -32,15 +32,15 @@ namespace video {
             uint32_t y = 0;
             uint8_t foreground = color16_t::white;
             uint8_t background = color16_t::black;
-        public:
             VGATextAdapter(screen_t properties);
             ~VGATextAdapter();
 
             screen_t getVideoProperties();
             mode_t   getVideoMode();
 
+            void   updateCursor();
             void   printChar(char c);
-            void   printInteger(uint64_t num, uint8_t base);
+            void   printInteger(int64_t num, uint8_t base);
             void   printString(const char* str);
             void   printf(const char* fmt ...);
             void   clearScreen();

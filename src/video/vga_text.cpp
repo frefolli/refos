@@ -17,6 +17,19 @@ video::mode_t video::VGATextAdapter::getVideoMode() {
     return this->mode;
 }
 
+inline void outb (unsigned short _port, unsigned char _data) {
+    asm __volatile__ ("outb %0, %1" : : "a" (_data), "dN" (_port));
+}
+
+void video::VGATextAdapter::updateCursor() {
+	uint16_t pos = this->x + this->y * this->properties.width;
+ 
+    outb(0x03d4, 0x0f);
+    outb(0x03d5, (pos & 0xff));
+    outb(0x03d4, 0x0e);
+    outb(0x03d5, ((pos >> 8) & 0xFF));
+}
+
 void video::VGATextAdapter::printChar(char c) {
     switch(c) {
         case '\t' : {
@@ -35,7 +48,7 @@ void video::VGATextAdapter::printChar(char c) {
         
         default : {
             uint16_t* ptr = (uint16_t*) this->properties.framebuffer;
-            uint32_t shift = this->x + this->y * this->properties.width;
+            uint64_t shift = this->x + this->y * this->properties.width;
             *(ptr + shift) = 
                 (this->background << 12) | 
                 (this->foreground << 8) | 
@@ -53,11 +66,12 @@ void video::VGATextAdapter::printChar(char c) {
             }
         }; break;
     }
+    this->updateCursor();
 }
 
 // max base 16
 static const char* _digits = "0123456789abcdef";
-void video::VGATextAdapter::printInteger(uint64_t num, uint8_t base) {
+void video::VGATextAdapter::printInteger(int64_t num, uint8_t base) {
     char buffer[21]; buffer[20] = '\0';
     char* ptr = buffer + 20;
     do {
@@ -66,9 +80,10 @@ void video::VGATextAdapter::printInteger(uint64_t num, uint8_t base) {
         num /= base;
     } while(num != 0);
 
+    if (num < 0)
+        this->printChar('-');
     if (base == 16)
         this->printString("0x");
-
     this->printString(ptr);
 }
 
@@ -86,6 +101,7 @@ void video::VGATextAdapter::clearScreen() {
         *ptr = (this->background << 12) | 
                (this->foreground << 8) | 
                (' ');
+        ptr++;
     }
 
     this->x = 0;
@@ -98,6 +114,7 @@ void video::VGATextAdapter::scrollScreen() {
         ((this->properties.height - 1) * this->properties.width);
     while(ptr < deadline) {
         *ptr = *(ptr + this->properties.width);
+        ptr++;
     }
 }
 
@@ -121,7 +138,7 @@ void video::VGATextAdapter::printf(const char* fmt ...) {
                     const char* str = va_arg(args, const char*);
                     this->printString(str);
                 }; break;
-                default: break;
+                default: this->printChar(*fmt);
             }; fmt++;
         } else {
             this->printChar(*fmt);

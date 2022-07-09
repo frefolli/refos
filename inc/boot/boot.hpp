@@ -22,15 +22,17 @@ namespace boot {
     
     bool checkAddress(uint64_t address);
 
+    bool checkKernelEnd(uint64_t kernelEnd, info_t* boot_info);
+
     void readHeader(uint8_t* address, info_t* boot_info);
 
     void readFramebufferTag(
             uint8_t* address, boot::info_t* boot_info);
 
+    void readMemoryMapTag(uint8_t* address, boot::info_t* boot_info);
+
     void readTag(
             uint8_t* address, uint32_t* type, uint32_t* size);
-
-    void printInfo(info_t* boot_info);
 };
 
 #endif

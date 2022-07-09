@@ -2,6 +2,7 @@
 
 memory::PagedManager::PagedManager(memory_t properties) {
     this->properties = properties;
+    this->pointer = (void*) (this->properties.base);
 }
 
 memory::PagedManager::~PagedManager() {
@@ -9,8 +10,8 @@ memory::PagedManager::~PagedManager() {
 }
 
 void* memory::PagedManager::malloc(uint32_t size) {
-    void* ptr = (void*) this->properties.base;
-    this->properties.base += size;
+    void* ptr = this->pointer;
+    this->pointer = (void*) ((uint8_t*) (this->pointer) + size);
     return ptr;
 }
 

@@ -5,9 +5,9 @@
 
 namespace memory {
     class PagedManager : public Manager {
-        private:
-            memory_t properties;
         public:
+            memory_t properties;
+            void* pointer;
             PagedManager(memory_t properties);
             ~PagedManager();
 

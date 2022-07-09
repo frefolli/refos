@@ -16,7 +16,7 @@ namespace video {
             mode_t   getVideoMode();
 
             void   printChar(char c);
-            void   printInteger(uint64_t num, uint8_t base);
+            void   printInteger(int64_t num, uint8_t base);
             void   printString(const char* str);
             void   printf(const char* fmt ...);
             void   clearScreen();

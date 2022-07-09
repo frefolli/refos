@@ -21,7 +21,7 @@ void video::VGAGraphicAdapter::printChar(char /*c*/) {
     // TODO
 }
 
-void video::VGAGraphicAdapter::printInteger(uint64_t /*num*/, uint8_t /*base*/) {
+void video::VGAGraphicAdapter::printInteger(int64_t /*num*/, uint8_t /*base*/) {
     // TODO
 }
 
@@ -42,11 +42,11 @@ void video::VGAGraphicAdapter::printf(const char* fmt ...) {
             fmt++;
             switch(*fmt) {
                 case 'd' : {
-                    int num = va_arg(args, int);
+                    int64_t num = va_arg(args, int64_t);
                     this->printInteger(num, 10);
                 }; break;
                 case 'x' : {
-                    int num = va_arg(args, int);
+                    int64_t num = va_arg(args, int64_t);
                     this->printInteger(num, 16);
                 }; break;
                 case 's' : {

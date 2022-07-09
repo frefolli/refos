@@ -29,7 +29,7 @@ namespace video {
             virtual mode_t   getVideoMode() = 0;
 
             virtual void   printChar(char c) = 0;
-            virtual void   printInteger(uint64_t num, uint8_t base) = 0;
+            virtual void   printInteger(int64_t num, uint8_t base) = 0;
             virtual void   printString(const char* str) = 0;
             virtual void   printf(const char* fmt ...) = 0;
             virtual void   clearScreen() = 0;
