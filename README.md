@@ -22,4 +22,6 @@ To run the built iso, call either:
 
 ### Boot
 
+here shutdown is stated as "kernel die", and infinite loop
+
 ![sample kernel state dump](boot.png)
