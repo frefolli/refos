@@ -2,6 +2,7 @@
 #include "legacy/stdbool.hpp"
 #include "memory/paged.hpp"
 #include "video/vga_text.hpp"
+#include "interrupts/idt.hpp"
 
 kernel::Kernel::Kernel(boot::info_t* bootInfo) {
     this->bootInfo = bootInfo;
@@ -17,11 +18,18 @@ kernel::Kernel::~Kernel() {
 
 void kernel::Kernel::main() {
     // start services, for now just print boot_info
-    this->memory = memory::Manager::buildManager(bootInfo->memory);
-    this->video = video::Adapter::buildAdapter(bootInfo->screen);
     
-    // visualize state
+    // setup memory management
+    this->memory = memory::Manager::buildManager(bootInfo->memory);
+    
+    // setup video adapter
+    this->video = video::Adapter::buildAdapter(bootInfo->screen);
     this->video->clearScreen();
+
+    // setup interrupt handlers
+    interrupts::initIDT();
+ 
+    // visualize state
     this->dumpState();
 
     // panic

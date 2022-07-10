@@ -1,4 +1,4 @@
-MODULES=kernel loader boot memory video
+MODULES=kernel loader boot memory video interrupts
 
 @all:
 	echo -e ""

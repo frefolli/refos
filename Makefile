@@ -1,6 +1,9 @@
 @all:
 	echo -e ""
 
+clear:
+	clear
+
 run:
 	make -C build run
 
