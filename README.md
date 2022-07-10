@@ -1,4 +1,4 @@
-# RefOs
+# RefOS
 
 Handmade bare operative system.
 
