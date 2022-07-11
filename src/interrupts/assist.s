@@ -35,8 +35,9 @@
 %endmacro
 
 [EXTERN isr_handler]
+[EXTERN irq_handler]
 
-%macro ISR_COMMON_EXIT 0
+%macro COMMON_EXIT 0
     popaq
     add rsp, 8; Remove the error code
     iretq
@@ -51,7 +52,7 @@
         mov rsi, rsp
         xor rbp, rbp
         call isr_handler
-        ISR_COMMON_EXIT
+        COMMON_EXIT
 %endmacro
 
 %macro ISR_NO_ERROR_CODE 1
@@ -64,7 +65,21 @@
         mov rsi, rsp
         xor rbp, rbp
         call isr_handler
-        ISR_COMMON_EXIT
+        COMMON_EXIT
+%endmacro
+
+%macro IRQ_CODE 2
+  global irq%1
+  irq%1:
+    cli
+    push 0
+    pushaq
+    mov rdi, %2
+    mov rsi, rsp
+    xor rdx, rdx
+    xor rbp, rbp
+    call irq_handler
+    COMMON_EXIT
 %endmacro
 
 ISR_NO_ERROR_CODE  0
@@ -99,4 +114,20 @@ ISR_NO_ERROR_CODE 28
 ISR_NO_ERROR_CODE 29
 ISR_ERROR_CODE 30
 ISR_NO_ERROR_CODE 31
-ISR_NO_ERROR_CODE 32
+
+IRQ_CODE 0, 32
+IRQ_CODE 1, 33
+IRQ_CODE 2, 34
+IRQ_CODE 3, 35
+IRQ_CODE 4, 36
+IRQ_CODE 5, 37
+IRQ_CODE 6, 38
+IRQ_CODE 7, 39
+IRQ_CODE 8, 40
+IRQ_CODE 9, 41
+IRQ_CODE 10, 42
+IRQ_CODE 11, 43
+IRQ_CODE 12, 44
+IRQ_CODE 13, 45
+IRQ_CODE 14, 46
+IRQ_CODE 15, 47

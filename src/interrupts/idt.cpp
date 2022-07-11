@@ -4,6 +4,10 @@
 idt_entry_t idt_entries[256];
 idt_ptr_t   idt_ptr;
 
+inline void outb (unsigned short _port, unsigned char _data) {
+    asm __volatile__ ("outb %0, %1" : : "a" (_data), "dN" (_port));
+}
+
 namespace interrupts {
     void setIDTGate(uint8_t num, uint64_t addr, uint16_t sel, uint8_t flags) {
        idt_entries[num].base_low = addr & 0xFFFF;
@@ -60,6 +64,35 @@ namespace interrupts {
         setIDTGate(30, (uint64_t) isr30, 0x08, 0x8E);
         setIDTGate(31, (uint64_t) isr31, 0x08, 0x8E);
 
+        outb(0x20, 0x11);
+        outb(0xA0, 0x11);
+        outb(0x21, 0x20);
+        outb(0xA1, 0x28);
+        outb(0x21, 0x04);
+        outb(0xA1, 0x02);
+        outb(0x21, 0x01);
+        outb(0xA1, 0x01);
+        outb(0x21, 0x0);
+        outb(0xA1, 0x0);
+
+        setIDTGate(32, (uint64_t)irq0, 0x08, 0x8E);
+        setIDTGate(33, (uint64_t)irq1, 0x08, 0x8E);
+        setIDTGate(34, (uint64_t)irq2, 0x08, 0x8E);
+        setIDTGate(35, (uint64_t)irq3, 0x08, 0x8E);
+        setIDTGate(36, (uint64_t)irq4, 0x08, 0x8E);
+        setIDTGate(37, (uint64_t)irq5, 0x08, 0x8E);
+        setIDTGate(38, (uint64_t)irq6, 0x08, 0x8E);
+        setIDTGate(39, (uint64_t)irq7, 0x08, 0x8E);
+        setIDTGate(40, (uint64_t)irq8, 0x08, 0x8E);
+        setIDTGate(41, (uint64_t)irq9, 0x08, 0x8E);
+        setIDTGate(42, (uint64_t)irq10, 0x08, 0x8E);
+        setIDTGate(43, (uint64_t)irq11, 0x08, 0x8E);
+        setIDTGate(44, (uint64_t)irq12, 0x08, 0x8E);
+        setIDTGate(45, (uint64_t)irq13, 0x08, 0x8E);
+        setIDTGate(46, (uint64_t)irq14, 0x08, 0x8E);
+        setIDTGate(47, (uint64_t)irq15, 0x08, 0x8E);
+
         flushIDT((uint64_t)&idt_ptr);
+        asm __volatile__ ("sti");
     }
 }

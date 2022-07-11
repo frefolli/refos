@@ -28,5 +28,12 @@ typedef struct {
 } registers_t;
 
 extern "C" void isr_handler(int intNum, registers_t* regs);
+extern "C" void irq_handler(int intNum, registers_t* regs);
+
+typedef void (*isr_t)(registers_t*);
+
+namespace interrupts {
+    void registerHandler(uint8_t n, isr_t handler);
+}
 
 #endif

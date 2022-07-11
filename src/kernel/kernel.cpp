@@ -3,6 +3,7 @@
 #include "memory/paged.hpp"
 #include "video/vga_text.hpp"
 #include "interrupts/idt.hpp"
+#include "interrupts/timer.hpp"
 
 kernel::Kernel::Kernel(boot::info_t* bootInfo) {
     this->bootInfo = bootInfo;
@@ -31,6 +32,8 @@ void kernel::Kernel::main() {
  
     // visualize state
     this->dumpState();
+
+    // interrupts::initTimer(50);
 
     // panic
     this->panic("shutting down the system as requested.");
