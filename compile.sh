@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-OUT_IMG=./builddir/fat.iso
+ISO_DIR=./builddir/iso_dir
+ISO=./builddir/refos.iso
 
 GNU_EFI_CRTO=/usr/lib/crt0-efi-x86_64.o
 GNU_EFI_LDS=/usr/lib/elf_x86_64_efi.lds
@@ -12,18 +13,20 @@ OBJFLAGS='-j .text -j .sdata -j .data -j .rodata -j .dynamic -j .dynsym  -j .rel
 function compile-with-gcc() {
   gcc $CFLAGS -c src/main.c -o builddir/main.o
   ld $LDFLAGS ./builddir/main.o -o ./builddir/main.so /usr/lib/libefi.a /usr/lib/libgnuefi.a
-  objcopy $OBJFLAGS ./builddir/main.so ./builddir/BOOTX64.EFI
+  objcopy $OBJFLAGS ./builddir/main.so ./builddir/REFOS.EFI
 }
 
-function create-fat() {
-  dd if=/dev/zero of=$OUT_IMG bs=1k count=1440
-  mformat -i $OUT_IMG -f 1440 ::
-  mmd -i $OUT_IMG ::/EFI
-  mmd -i $OUT_IMG ::/EFI/BOOT
-  mcopy -i $OUT_IMG ./builddir/BOOTX64.EFI ::/EFI/BOOT
+function create-iso() {
+  mkdir -p $ISO_DIR/boot/grub/
+  cp ./scripts/grub.cfg $ISO_DIR/boot/grub/grub.cfg
+  mkdir -p $ISO_DIR/EFI/BOOT
+  grub2-mkstandalone -O x86_64-efi -o $ISO_DIR/EFI/BOOT/BOOTX64.EFI "boot/grub/grub.cfg=./scripts/grub-mkstandalone.cfg"
+  mkdir -p $ISO_DIR/EFI/BOOT/
+  cp ./builddir/REFOS.EFI $ISO_DIR/EFI/BOOT/REFOS.EFI
+  grub2-mkrescue -o $ISO $ISO_DIR
 }
 
 rm -rf ./builddir
 mkdir -p ./builddir
 compile-with-gcc
-create-fat
+create-iso
