@@ -1,11 +1,7 @@
 #include <efi/efi.h>
 #include <efi/efilib.h>
 #include <stdbool.h>
-
-#define loader_println(fmt_or_msg, ...) \
-  Print(L"EFI Loader :: "); \
-  Print(fmt_or_msg __VA_OPT__(,)  __VA_ARGS__); \
-  Print(L"\n\r")
+#include <stdarg.h>
 
 static inline void PlotPixel_32bpp(uint32_t* framebuffer, uint32_t pixels_per_scan_line, int x, int y, uint32_t pixel) {
    *((uint32_t*)(framebuffer + pixels_per_scan_line * y + x)) = pixel;
@@ -14,16 +10,16 @@ static inline void PlotPixel_32bpp(uint32_t* framebuffer, uint32_t pixels_per_sc
 EFI_STATUS EFIAPI efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
   // Initialize EFI::lib
   InitializeLib(ImageHandle, SystemTable);
-  loader_println(L"Starting Session");
+  Print(L"EFI Loader :: Starting Session");
 
   // Locating GOP protocol data (for VESA usage)
   EFI_GUID gopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
   EFI_GRAPHICS_OUTPUT_PROTOCOL *gop;
   EFI_STATUS Status = uefi_call_wrapper(BS->LocateProtocol, 3, &gopGuid, NULL, (void**)&gop);
   if(EFI_ERROR(Status)) {
-    loader_println(L"Unable to locate GOP");
+    Print(L"EFI Loader :: Unable to locate GOP\n\r");
   } else {
-    loader_println(L"GOP has been located");
+    Print(L"EFI Loader :: GOP has been located\n\r");
   }
 
   // Query GOP modes
@@ -34,18 +30,18 @@ EFI_STATUS EFIAPI efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTabl
   if (Status == EFI_NOT_STARTED)
     Status = uefi_call_wrapper(gop->SetMode, 2, gop, 0);
   if(EFI_ERROR(Status)) {
-    loader_println(L"Unable to get native mode");
+    Print(L"EFI Loader :: Unable to get native mode\n\r");
   } else {
     nativeMode = gop->Mode->Mode;
     numModes = gop->Mode->MaxMode;
-    loader_println(L"Native mode is %d", nativeMode);
-    loader_println(L"Number of modes is %d", numModes);
+    Print(L"EFI Loader :: Native mode is %d\n\r", nativeMode);
+    Print(L"EFI Loader :: Number of modes is %d\n\r", numModes);
   }
 
   // Display modes
   for (uint32_t i = 0; i < numModes; i++) {
     Status = uefi_call_wrapper(gop->QueryMode, 4, gop, i, &SizeOfInfo, &info);
-    loader_println(L"Mode %d has width %d and height %d, format is %x%s",
+    Print(L"EFI Loader :: Mode %d has width %d and height %d, format is %x%s\n\r",
         i,
         info->HorizontalResolution,
         info->VerticalResolution,
@@ -58,10 +54,10 @@ EFI_STATUS EFIAPI efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTabl
   UINTN graphic_mode = 15; // 1366x768
   Status = uefi_call_wrapper(gop->SetMode, 2, gop, graphic_mode);
   if(EFI_ERROR(Status)) {
-    loader_println(L"Unable to set mode %03d", graphic_mode);
+    Print(L"EFI Loader :: Unable to set mode %03d\n\r", graphic_mode);
   } else {
     // get framebuffer
-    loader_println(L"Framebuffer address %x size %d, width %d height %d pixelsperline %d",
+    Print(L"EFI Loader :: Framebuffer address %x size %d, width %d height %d pixelsperline %d\n\r",
         gop->Mode->FrameBufferBase,
         gop->Mode->FrameBufferSize,
         gop->Mode->Info->HorizontalResolution,
@@ -77,7 +73,8 @@ EFI_STATUS EFIAPI efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTabl
   }
 
   // Hanging
-  loader_println(L"Ending Session");
+  (void)uefi_call_wrapper(SystemTable->ConOut->ClearScreen, 1, SystemTable->ConOut);
+  Print(L"EFI Loader :: Ending Session\n\r");
   while(true);
   return EFI_SUCCESS;
 }

@@ -10,7 +10,7 @@ GNU_EFI_LDS=/usr/lib/elf_x86_64_efi.lds
 LIB_EFI=/usr/lib/libefi.a
 LIB_GNUEFI=/usr/lib/libgnuefi.a
 
-CFLAGS=-fpic -ffreestanding -fno-stack-protector -fno-stack-check -fshort-wchar -mno-red-zone -maccumulate-outgoing-args
+CFLAGS=--std=c23 -fpic -ffreestanding -fno-stack-protector -fno-stack-check -fshort-wchar -mno-red-zone -maccumulate-outgoing-args
 LDFLAGS=-shared -Bsymbolic -T${GNU_EFI_LDS} ${GNU_EFI_CRTO}
 OBJFLAGS=-j .text -j .sdata -j .data -j .rodata -j .dynamic -j .dynsym  -j .rel -j .rela -j .rel.* -j .rela.* -j .reloc --target efi-app-x86_64 --subsystem=10
 
