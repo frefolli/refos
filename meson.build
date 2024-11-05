@@ -1,15 +1,14 @@
-project('efi', 'c',
+project('efi', 'cpp',
   version : '0.1',
-  default_options : ['warning_level=3', 'c_std=c23'])
+  default_options : ['warning_level=3'])
 
-cc = meson.get_compiler('c')
-
+cpp = meson.get_compiler('cpp')
 gnu_efi_crto='/usr/lib/crt0-efi-x86_64.o'
 gnu_efi_lds='/usr/lib/elf_x86_64_efi.lds'
-libefi = cc.find_library('efi', required: true)
-libgnuefi = cc.find_library('gnuefi', required: true)
+libefi = cpp.find_library('efi', required: true)
+libgnuefi = cpp.find_library('gnuefi', required: true)
 
-c_flags = [
+cpp_flags = [
   '-fpic',
   '-shared',
   '-ffreestanding',
@@ -17,7 +16,8 @@ c_flags = [
   '-fno-stack-check',
   '-fshort-wchar',
   '-mno-red-zone',
-  '-maccumulate-outgoing-args'
+  '-maccumulate-outgoing-args',
+  '-DEFI_FUNCTION_WRAPPER'
 ]
 ld_flags = [
   '-Wl,-Bsymbolic',
@@ -41,9 +41,9 @@ objcopy_flags = [
 ]
 
 librefos = shared_library('refos', [
-    'src/main.c'
+    'src/main.cc'
   ],
-  c_args: c_flags,
+  cpp_args: cpp_flags,
   link_args: ld_flags,
   dependencies: [libefi, libgnuefi]
 )
