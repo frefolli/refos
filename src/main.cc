@@ -1,5 +1,6 @@
 #include <climits>
 #include <cstdarg>
+#include <cstring>
 
 extern "C" {
   #include <efi/efi.h>
@@ -9,7 +10,6 @@ extern "C" {
 #include <optional>
 
 inline void PlotPixel_32bpp(uint32_t* framebuffer, uint32_t pixels_per_scan_line, int x, int y, uint32_t pixel) {
-   *((uint32_t*)(framebuffer + pixels_per_scan_line * y + x)) = pixel;
 }
 
 namespace os {
@@ -139,11 +139,6 @@ extern "C" EFI_STATUS EFIAPI efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE 
         framebuffer.address,
         framebuffer.width,
         framebuffer.height);
-    for (uint32_t x = 0; x < framebuffer.width; ++x) {
-      for (uint32_t y = 0; y < framebuffer.height; ++y) {
-        PlotPixel_32bpp(framebuffer.address, framebuffer.pitch, x, y, 0xFFFFFFFF);
-      }
-    }
   }
 #endif
 
